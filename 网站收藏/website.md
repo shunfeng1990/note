@@ -28,3 +28,4 @@
 27. [迅捷文字转语音](https://www.xunjiepdf.com/voice) - 迅捷文字转语音
 28. [swiper](https://www.swiper.com.cn) - 触摸滑动插件
 29. [Typora](https://typora.io/#download) - 一款可视化的Markdown编辑器
+30. [Pigcha加速器](http://www.pigcha.com/) - 支持windows linux ios android
