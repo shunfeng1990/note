@@ -171,7 +171,7 @@ else:
 
 
 
-#### 流程控制
+### 流程控制
 
 ```python
 if 10 > 5:
@@ -415,9 +415,129 @@ print(list_a)
 
 
 
+获取指定元素首次出现的下标
+
+```python
+listname.index(obj)
+```
+
+统计数值列表元素的总和
+
+```python
+result = [10,20,30]
+total = sum(result)
+print('总和是：%d' % total)
+```
 
 
 
+列表推导式
+
+> 使用列表推导式可以快速生成一个列表，或者根据某个条件生成指定的列表
+
+```python
+# 生成指定范围的数值列表
+# 生成3个随机数，要求数的范围是0~9
+import random
+number = [random.randint(0,9) for i in range(3)]
+print(number)
+```
+
+```python
+根据列表生成指定需求的列表
+# 语法 newlist = [Expression for var in list]
+# 生成一个商品列表打5折的新列表
+price = [1200,5000,2000,1000]
+sale = [int(x*0.5) for x in price]
+print('打5折后的价格:',sale)
+```
+
+```python
+# 从列表选择符合条件的元素，组成新的列表
+# 语法 newlist = [Expression for var in list if condition]
+# 生成一个价格高于1000的列表
+price = [1200,5000,2000,1000]
+sale = [x for x in price if x > 1000]
+print(sale)
+```
+
+二维列表（列表中的列表）
+
+```python
+arr = [[1,2,3],[4,5,6]]
+# 二维列表访问元素
+arr[1][0]  # 访问结果是4
+```
+
+```python
+# 列表推导式创建(4组 每组5个值) 4行5列
+arr = [[j for j in range(5)] for i in range(4)]
+print(arr)
+```
+
+------
+
+> 元组和列表类似，只是元组的类型可以不同，序列不可变，元素不可以单独修改
+
+创建元组
+
+```python
+num = (1,2,3,4)
+python = ('爬虫',)  # 如果只有一个值，要加一个逗号, 不加的话就是字符串类型了
+emptytuple = ()  # 空元组
+
+# 创建数值元组可以直接使用 tuple函数
+tuple(range(10,20,2))  # 创建10到20 步长为2的一些数值
+```
+
+查看元组中的某个值
+
+```python
+num = (1,2,3,4)
+num[1]  # 根列表一个样
+```
+
+```python
+# 切片方式查看前3个
+num[:3]
+```
+
+遍历元组
+
+```python
+python = ('简单','好学','强大')
+for index,item in enumerate(python):
+    print(index,item)
+```
+
+修改元组
+
+```python
+python = ('简单','好学','强大')
+python[1] = '难学'  # 这样是错误的，因为元组是不可变序列的 所以不能单独修改某个元素
+python = ('简单','难学','强大')  # 只能通过重新赋值修改
+# 两个元组组合成一个新的元组使用 + 号
+```
+
+> 元组推导式和列表推导式类似，只是把列表的[]换成()
+
+###### 元组和列表的区别
+
+简单理解：列表好比用铅笔写字，写错了可以改；元组好比用钢笔写字，写错了只能换张纸再写。
+
+###### 官方区别
+
+1. 列表可变序列，元组不可变
+2. 列表可以使用append() extend() insert() remove() pop() 等方法，元组不可以
+3. 列表和元组都支持使用切片查看，但是列表可以修改，元组只能查看
+4. 元组的访问速度比列表要快，如果不修改的值 建议使用元组
+5. 列表不能作为字典的建，而元组可以
+
+
+
+### 字典和集合
+
+#### 
 
 
 
