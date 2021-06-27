@@ -537,7 +537,167 @@ python = ('简单','难学','强大')  # 只能通过重新赋值修改
 
 ### 字典和集合
 
-#### 
+> 字典类似其他语言的对象，键值对的方式呈现，是无序的。
+
+创建字典
+
+```python
+test = {}  # 空字典
+test = {'name':'张三','age':22}
+```
+
+```python
+# 两个列表合并成一个字典（列表1是键 列表2是值）
+list_a = ['name','age']
+list_b = ['张三',22]
+test = dict(zip(list_a, list_b))
+```
+
+删除或清除字典
+
+```python
+del test  # 删除字典test
+test.clear()  # 清除字典里的全部内容
+```
+
+访问查看字典
+
+```python
+# 通过字典的键来查看对应的内容
+test = {'name1':'张三','name2':'李四','name3':'王五'}
+test['name1']  # 查看张三
+
+# 以上访问如果字典内不存在该键 将会报错，解决这个问题如下方式
+print(test['name4'] if 'name4' in test else '字典内不存在')  # 使用判断方式
+print(test.get('name4','字典内不存在'))  # 使用get()方法 推荐使用
+```
+
+遍历字典
+
+```python
+test = {'name1':'张三','name2':'李四','name3':'王五'}
+for item in test.item():
+    print(item)
+    
+for key, val in test.items():
+    print(key,val)
+```
+
+字典的增删改
+
+```python
+test = {'name1':'张三','name2':'李四','name3':'王五'}
+test['name4'] = '马六'  # 增加 当该键存在则修改
+del test['name2']  # 删除
+
+# 删除一个不存在的键，避免报错如下操作
+if 'name2' in test:
+    del test['name2']
+else:
+    print('要删除的不存在')
+```
+
+> 集合最大的用处就是去重复，集合是无序，不可重复的一组数据，如果重复只保留一个
+
+创建集合
+
+```python
+set1 = {1,2,2,3}  # 逗号分隔 方式一
+set2 = set(1,2,2,3)  # 这是错误的，set() 只能接收一个参数
+set2 = set([1,2,3])  # set()函数创建 方式二 推荐
+```
+
+把元组和列表转换成集合
+
+```python
+tuple_a = (1,2,3,4,4)  # 元组
+list_a = [5,6,7,8,8]  # 列表
+set(tuple_a)  # 把元组转换成集合 去重复
+set(list_a)  # 把列表转换成集合 去重复
+```
+
+集合的添加和删除
+
+```python
+set1 = {1,2,2,3}
+set1.add(4)  # 添加
+set1.remove(1)  # 删除一个元素
+set1.pop(3)  # 删除一个元素
+del set1  # 删除整个集合
+set1.clear()  # 清空
+```
+
+```python
+# 同样的删除一个不存在的元素时，防止报错 做个判断
+if 4 in set1: set1.pop(4)
+```
+
+集合的交集、并集和差集运算
+
+```python
+# 交集运算：&
+# 并集运算：|
+# 差集运算：-
+set1 = set(['a','b','c','d'])
+set2 = set(['e','f','g','h','b','c'])
+print(set1 & set2)  # 两组哪些内容有交集
+print(set1 | set2)  # 两组一共有哪些内容 去重
+print(set2 - set1)  # 从set2去掉和set1重复的
+print(set1 - set2)  # 从set1去掉和set2重复的
+```
+
+------
+
+### 字符串
+
+字符串编码转换
+
+```python
+str1 = '中国人'
+str1.encode()  # 编码 默认utf-8
+str1.decode()  # 解码
+```
+
+字符串的拼接
+
+```python
+# 拼接使用 + 
+# 但是不允许拼接其他类型，除非使用str() 函数进行转换成字符串在拼接
+str1 = 'abc'
+str2 = 100
+str3 = str1 + str2  # 错误的
+str3 = str1 + str(str2)  # 正确的
+```
+
+计算字符串的长度
+
+```python
+str1 = 'python'
+len(str1)  # 使用len
+```
+
+截取字符串
+
+```python
+# 字符串的索引是从0开始，每个字符占一个位置，可以使用切片方式截取
+str1 = '人生苦短,我用python'
+str1[1]  # 截取的第2个
+str1[5:]  # 从第6个字符开始截取
+str1[:5]  # 从所边开始截取5个
+str1[2:5]  # 截取3到第5个字符
+```
+
+分割合并字符串
+
+```python
+str1 = 'abc 22  33'
+str1.split()  # 分割字符串 返回一个列表
+```
+
+```python
+list_a = ['张三','李四','王五']
+' @'.join(list_a)  # 使用join 合并 @拼接
+```
 
 
 
