@@ -1,5 +1,7 @@
 # Python 从入门到精通
 
+## 基础知识：
+
 输出语句print
 
 ```python
@@ -698,6 +700,253 @@ str1.split()  # 分割字符串 返回一个列表
 list_a = ['张三','李四','王五']
 ' @'.join(list_a)  # 使用join 合并 @拼接
 ```
+
+检索字符串
+
+```python
+str_a = 'abcdd'
+str_a.count('a')  # count() 检索指定字符串出现的次数，不存在返回0
+```
+
+```python
+str_a = 'abcdd'
+str_a.find('b')  # find() 检索是否包含指定的子字符串 不存在则返回-1，存在返回首次出现的位置
+str_a.index('b')  # 与上面类似 只是如果不存在会抛出异常
+```
+
+```python
+# 如果只想判断指定字符串是否存在 可以直接使用 in
+'a' in str_a  # 包含a 则返回True
+```
+
+```python
+# startswith() 检索字符串是否以 指定的子字符串开头 是 返回True 不是 返回Falsh
+# endswith() 检索字符串是否以 指定的子字符串结尾 是 返回True 不是 返回Falsh
+str1 = 'www.baidu.com'
+str1.startswith('www')
+str1.endswith('com')
+```
+
+字母的大小写转换
+
+```python
+str1 = 'WWW.baidu.Com'
+str1.lower()  # 大写转小写
+str1.upper()  # 小写转大写
+```
+
+去除字符串中的空格和特殊字符
+
+```python
+# strip() 去除左右两测的空格和特殊字符
+# lstrip() 只去除左侧
+# rstrip() 只去除右侧
+str1 = ' www.baidu.com  \t\n\r'
+str1.strip()
+```
+
+格式化字符串
+
+```python
+# %s 字符串占位 %d 整数数值占位 %f 浮点数占位（保留2位要加 .2）
+str1 = '我叫%s,今年%d岁,体重%.2f斤' % ('张三',23,120.053)
+print(str1)
+```
+
+```python
+# format() 方法格式化字符串 推荐使用
+s = "{} is a {}".format('Tom', 'Boy')  # {} 占位
+print(s) # Tom is a Boy
+```
+
+```python
+# 通过索引来指定内容 索引0开始
+s1 = "{1} is a {2}".format('Tom', 'Lily', 'Girl')
+print(s1) # Lily is a Girl
+```
+
+```python
+# 通过参数名来匹配
+s = "{name} is a {sex}".format(name='Tom', sex='Boy')
+print(s) # Tom is a Boy
+```
+
+```python
+如果参数已经确定，可以直接利用{}进行格式化引用
+name = 'Tom'
+sex = 'Girl'
+# 以f开头表示在字符串中支持大括号内的python表达式
+s = f"{name} is a {sex}"
+print(s) # Tom is a Girl
+```
+
+```python
+# 对参数的部分进行引用
+s = "我是{s},我来自{s[0]}国".format(s='中国人')
+print(s)  # 我是中国人，我来自中国
+```
+
+```python
+# 保留小数2位数
+s = 'π is {:.2f}'.format(3.1415926)
+print(s) # π is 3.14
+```
+
+```python
+# 还可以用于字符串截取
+s = "{:.1}".format('Hello')
+print(s) # H
+```
+
+```python
+# 给数字加千位
+s = "{:,}".format(1000000)
+print(s) # 1,000,000
+```
+
+```python
+# 数字转换成二进制
+s = "{:b}".format(8)
+print(s) # 1000
+
+# b: 输出整数的二进制方式；
+# c: 输出整数对应的 Unicode 字符；
+# d: 输出整数的十进制方式；
+# o: 输出整数的八进制方式；
+# x: 输出整数的小写十六进制方式；
+# X: 输出整数的大写十六进制方式；
+```
+
+```python
+# 字符串中数字左边补0, 0>5表示数据总显示宽度为5，以０补齐
+print('{:0>5d}'.format(3))
+# 00003
+
+# 可以补齐其它数字，例如８，输出总宽度为５
+print('{:8>5d}'.format(3))
+# 88883
+```
+
+```python
+# list、tuple的拆分
+# 在format格式化时，可使用* 或者 ** 进行对list、tuple拆分
+foods = ['fish', 'beef', 'fruit']
+s = 'i like eat {} and {} and {}'.format(*foods)
+print(s)  # i like eat fish and beef and fruit
+
+foods = ['fish', 'beef', 'fruit']
+s = 'i like eat {2} and {0} and {1}'.format(*foods)
+print(s)  # i like eat fruit and fish and beef
+
+dict_temp = {'name': 'Lily', 'age': 18} 
+# 字典需要用 ** 进行拆分
+s = 'My name is {name}, i am {age} years old'.format(**dict_temp)
+print(s) # My name is Lily, i am 18 years old
+```
+
+------
+
+## 进阶提高：
+
+### python使用正则
+
+[正则表达式教程](https://www.runoob.com/regexp/regexp-metachar.html)
+
+匹配字符串
+
+```python
+# 使用match() 是从开始位置进行匹配
+
+import re  # 引入re模块
+pattern = r'my'
+string = 'My is Chinese'
+match = re.match(pattern, string, re.I)  # 匹配字符串不区分字母大小写
+print(match)
+
+match.start()  # 匹配值的起始位置
+match.end()  # 匹配值的结束位置
+match.span()  # 匹配位置的元组
+match.string  # 要匹配的字符串
+match.group()  # 匹配到的数据
+
+```
+
+```python
+# 使用search() 是在整个字符串中匹配第一次出现的值
+
+import re  # 引入re模块
+pattern = r'(黑客)|(抓包)|(Trojan)'
+string = '我是程序员，我喜欢看黑客方面的图书，想研究一下 Trojan'
+match = re.search(pattern, string)
+print(match)
+match.group()  # 黑客
+```
+
+```python
+# findall() 在整个字符串中搜索所有符合条件的字符串，并以列表的形式返回
+
+import re  # 引入re模块
+pattern = r'tiger_\w+'  # 匹配tiger_ 开头的  前面加小 r 意思声明后面的字符是原生字符串
+string = 'My is Tiger_a, is tiger_b'
+match = re.findall(pattern, string, re.I)  # 不区分大小写
+print(match)
+```
+
+```python
+# compile 编译
+import re
+c = re.compile('\d+')  # compile 编译
+string = '我的手机号：13188888888'
+c.findall(string)
+```
+
+```python
+# 小括号的用处，匹配出想要的那部分就扩起来
+import re
+string = 'www.baidu.com'
+c = re.compile('\.(.*)\.')  # compile 编译
+c.findall(string)  # 匹配baidu
+```
+
+```python
+# 以下是错误的 暂时不会解
+
+import re
+string = 'd:\test\test'
+match = re.findall(r'd:\', string)
+print(match)  # 需要匹配出 d:\
+```
+
+替换字符串
+
+```python
+# sub() 实现字符串的替换
+
+import re
+string = '我们都喜欢在天猫或者淘宝上买东西，当当也不错啊'
+c = re.compile(r'[淘宝|天猫|当当]')
+str1 = c.sub('*',string)
+print(str1)  # 我们都喜欢在**或者**上买东西，**也不错啊
+
+string = '电话：15088888888'
+match = re.sub('\d+', '不详', string)
+print(match)  # 电话：不详
+```
+
+正则分割字符串
+
+```python
+# split() 根据正则分割 列表形式返回
+
+import re
+pattern = r'[?|&]'
+url = 'http://www.baidu.com/login.asp?name=mr&age=18'
+result = re.split(pattern, url)
+print(result)
+
+```
+
+### 函数
 
 
 
