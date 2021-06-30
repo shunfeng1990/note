@@ -909,11 +909,13 @@ c.findall(string)  # 匹配baidu
 ```
 
 ```python
-# 以下是错误的 暂时不会解
+# 如果要匹配到d:\ 暂时能解决的办法就是先取 d: 在拼接一个 /
+# 还有就是注意：字符串最后不允许出现一个\如果想显示\ 要写成\\
 
 import re
-string = 'd:\test\test'
-match = re.findall(r'd:\', string)
+string = r'd:\test\test'
+pattern = 'd:'
+match = re.findall(pattern, string)
 print(match)  # 需要匹配出 d:\
 ```
 
@@ -947,6 +949,546 @@ print(result)
 ```
 
 ### 函数
+
+```python
+# 创建函数使用 def 关键字
+def test():
+    print('这是一个函数')
+    
+test()  # 调用函数
+```
+
+```python
+# 带参数的
+def test(x, y):  # 形参
+    result = x + y
+    print(result)
+    
+test(10, 20)  # 实参
+```
+
+```python
+# 关键字参数
+def test(name, age):
+    print('名字是：' + name,'年龄是：' + age)
+    
+test(age='30',name='张三')  # 位置不相同 不会影响
+
+```
+
+```python
+# 参数的默认值
+def test(age, name='路人'):
+    print('名字是：{} 年龄是：{}'.format(name, age))
+    
+test(30)  # 只传一个年龄 名字就用默认的值    
+```
+
+> 默认参数必须指向不可变的对象
+
+```python
+# 可变参数 *（实际参数可以随意个）并将其放到一个元组中
+def test(*args):
+    print('我喜欢吃的水果:')
+    for item in args:
+        print(item)
+
+test('apple','banana','orange')  # 根据需求可写多个参数
+
+# 同理，可以将元组当成参数传递进去
+def test(*args):
+    print('我喜欢吃的水果:')
+    for item in args:
+        print(item)
+
+tuple1 = ('apple', 'banana', 'orange')
+test(*tuple1)  # 效果一样 推荐这种
+```
+
+```python
+# 可变参数 ** (也是接收任意多个实际参数) 但是实际参数是类似 关键字参数一样的显示赋值的实际参数
+# 并将其放到一个字典中
+def test(**kwargs):
+    print()
+    for key,value in kwargs.items():
+        print(key, value)
+        
+test(name='andy', age=23, height=180)
+
+# 同理 可以把字典当成一个参数传递进去
+def test(**kwargs):
+    print()
+    for key,value in kwargs.items():
+        print(key, value)
+        
+dict1 = {'name':'andy','age':23, 'height':180}
+test(**dict1)  # 效果一样 推荐这种
+```
+
+```python
+# 函数返回值 return
+def test(x, y):
+    return x + y  # 返回x+y的结果
+
+test(10,20)
+```
+
+> python中一个py文件就是一个模块，当我们写好一个py文件后想要测试这个文件就可以使用 __name__
+
+```python
+# 比如这是1.py文件
+def main():
+    print('测试')
+
+if __name__ == "main":
+    main()
+    
+# 以上：如果单独执行这个1.py文件 main()就会被执行，但是如果把这个文件当成一个模块被使用的时候就不会执行，这就是作用，就是调试使用而已。    
+```
+
+> 局部变量只能在函数内部使用， 全局变量可以在函数的内外使用，两者最好不要重名。
+
+```python
+# 匿名函数
+func = lambda x,y:x*y
+func(2,3)
+```
+
+
+
+### 面向对象（oop）
+
+> 面向对象的三大特征：封装  继承  多态
+
+```python
+# 创建类使用 class 关键字
+class Animal:
+    """类的帮助信息"""
+    pass
+
+monkey = Animal()  # 创建类的实例
+print(monkey)
+```
+
+```python
+# __init__() 方法 类似其他语言的构造方法，就是初始化成员信息的
+class Animal:
+    """动物类"""
+    def __init__(self):  # 构造方法 self 不能缺少 否则抛异常
+        print('我是动物类')
+        
+monkey = Animal()  # 创建动物类的实例
+print(monkey)
+```
+
+```python
+class Animal:
+    """动物类"""
+    def __init__(self, name, age):  # 初始化
+        self.name = name
+        self.age = age
+
+monkey = Animal('悟空',500)
+print(monkey)
+print(monkey.name)  # 悟空
+print(monkey.age)  # 500
+```
+
+```python
+class Cat:
+    def __init__(self, new_name):
+        self.name = new_name
+
+    def eat(self):  # 成员方法
+        print("{}爱吃鱼".format(self.name))
+
+
+tom = Cat("tom")
+tom.eat()  # 调用方法
+
+tom2 = Cat("tom2")
+tom2.eat()  # 调用方法
+```
+
+```python
+class Person:
+    def __init__(self, name, weight):
+        self.name = name
+        self.weight = weight
+
+    def __str__(self):  # 返回一个字符串 对象的描述信息
+
+        return '我的名字叫 %s 体重 %.2f ' % (self.name, self.weight)
+
+    def run(self):
+        print("跑步锻炼身体")
+        self.weight -= 0.5
+
+    def eat(self):
+        print("吃东西容易长胖")
+        self.weight += 1
+
+
+ming = Person("小明", 75.0)
+ming.run()
+ming.eat()
+print(ming)
+```
+
+一个对象的 **属性** 也可以是 **另外一个类创建的对象**
+
+```python
+class Gun:
+
+    def __init__(self, model):
+
+        # 枪的型号
+        self.model = model
+        # 子弹数量
+        self.bullet_count = 0
+
+    def add_bullet(self, count):
+
+        self.bullet_count += count
+
+    def shoot(self):
+
+        # 判断是否还有子弹
+        if self.bullet_count <= 0:
+            print("没有子弹了...")
+
+            return
+
+        # 发射一颗子弹
+        self.bullet_count -= 1
+        
+        print("%s 发射子弹[%d]..." % (self.model, self.bullet_count))
+```
+
+```python
+class Soldier:
+
+    def __init__(self, name):
+
+        # 姓名
+        self.name = name
+        # 枪，士兵初始没有枪 None 关键字表示什么都没有
+        self.gun = None
+
+    def fire(self):
+
+        # 1. 判断士兵是否有枪
+        if self.gun is None:
+            print("[%s] 还没有枪..." % self.name)
+
+            return
+
+        # 2. 高喊口号
+        print("冲啊...[%s]" % self.name)
+
+        # 3. 让枪装填子弹
+        self.gun.add_bullet(50)
+
+        # 4. 让枪发射子弹
+        self.gun.shoot()
+```
+
+```python
+# 创建枪对象
+ak47 = Gun("ak47")
+
+# 创建士兵对象
+xusanduo = Soldier("许三多")
+xusanduo.gun = ak47
+xusanduo.fire()
+```
+
+
+
+> 身份运算符用于 **比较** 两个对象的 **内存地址** 是否一致 —— **是否是对同一个对象的引用**
+
+- 在 `Python` 中针对 `None` 比较时，建议使用 `is` 判断
+
+| 运算符 | 描述                                      | 实例                            |
+| ------ | ----------------------------------------- | ------------------------------- |
+| is     | is 是判断两个标识符是不是引用同一个对象   | x is y，类似 id(x) == id(y)     |
+| is not | is not 是判断两个标识符是不是引用不同对象 | x is not y，类似 id(a) != id(b) |
+
+is 与 == 区别：
+
+`is` 用于判断 **两个变量 引用对象是否为同一个**
+`==` 用于判断 **引用变量的值** 是否相等
+
+
+
+#### python私有属性和私有方法
+
+**应用场景**
+
+- 在实际开发中，**对象** 的 **某些属性或方法** 可能只希望 **在对象的内部被使用**，而 **不希望在外部被访问到**
+- **私有属性** 就是 **对象** 不希望公开的 **属性**
+- **私有方法** 就是 **对象** 不希望公开的 **方法**
+
+**定义方式**
+
+- 在 **定义属性或方法时**，在 **属性名或者方法名前** 增加 **两个下划线**，定义的就是 **私有** 属性或方法
+
+```python
+class Women:
+
+    def __init__(self, name):
+
+        self.name = name
+        # 不要问女生的年龄
+        self.__age = 18
+
+    def __secret(self):
+        print("我的年龄是 %d" % self.__age)
+
+
+xiaofang = Women("小芳")
+# 私有属性，外部不能直接访问
+# print(xiaofang.__age)
+
+# 私有方法，外部不能直接调用
+# xiaofang.__secret()
+```
+
+`python` 中，并没有 **真正意义** 的 **私有**
+
+- 在给 **属性**、**方法** 命名时，实际是对 **名称** 做了一些特殊处理，使得外界无法访问到
+- **处理方式**：在 **名称** 前面加上 `_类名` => `_类名__名称`
+
+```python
+# 私有属性，外部可以如下调用
+print(xiaofang._Women__age)
+
+# 私有方法，外部可以如下调用
+xiaofang._Women__secret()
+```
+
+> dir 内置函数 可以查看对象的方法列表
+
+```python
+def demo():
+    """测试函数"""
+    print('测试')
+dir(demo)  # 查看该函数对应的方法列表
+```
+
+
+
+```python
+# 定义只包含方法的类
+class 类名:
+    def 方法1(self, 参数):
+        pass
+    def 方法2(self, 参数)：
+    	pass
+    
+# 创建对象
+对象变量 = 类名()
+
+# 调用方法
+对象变量.方法1()
+```
+
+```python
+# __del__ 方法 对象销毁前调用
+# __str__ 方法 返回对象的描述信息 print 函数输出使用
+```
+
+
+
+#### python 继承
+
+```python
+# 单继承
+class 类名(父类名):
+
+    pass
+```
+
+##### 关于 `super`
+
+- 在 `Python` 中 `super` 是一个 **特殊的类**
+- `super()` 就是使用 `super` 类创建出来的对象
+- **最常** 使用的场景就是在 **重写父类方法时**，调用 **在父类中封装的方法实现**
+
+**也就是既要调用父类的方法，又要对该方法进行重写 则使用。**
+
+ 
+
+**在 `Python 2.x` 时，如果需要调用父类的方法，还可以使用以下方式：**
+
+```python
+父类名.方法(self)
+```
+
+
+
+### 父类的 私有属性 和 私有方法
+
+1. **子类对象** **不能** 在自己的方法内部，**直接** 访问 父类的 **私有属性** 或 **私有方法**
+2. **子类对象** 可以通过 **父类** 的 **公有方法** **间接** 访问到 **私有属性** 或 **私有方法**
+
+> - **私有属性、方法** 是对象的隐私，不对外公开，**外界** 以及 **子类** 都不能直接访问
+> - **私有属性、方法** 通常用于做一些内部的事情
+
+```python
+# 多继承
+class 子类名(父类名1, 父类名2...)
+    pass
+```
+
+- **子类** 可以拥有 **多个父类**，并且具有 **所有父类** 的 **属性** 和 **方法**
+
+**提示：\**开发时，应该尽量避免这种容易产生混淆的情况！\** —— 如果 \**父类之间\** 存在 \**同名的属性或者方法\**，应该 \**尽量避免\** 使用多继承**
+
+ 
+
+- `Python` 中针对 **类** 提供了一个 **内置属性** `__mro__` 可以查看 **方法** 搜索顺序
+- MRO 是 `method resolution order`，主要用于 **在多继承时判断 方法、属性 的调用 路径**
+
+```python
+print(C.__mro__)
+```
+
+
+
+#### python 新式类与旧式类
+
+> `object` 是 `Python` 为所有对象提供的 **基类**，提供有一些内置的属性和方法，可以使用 `dir` 函数查看
+
+- **新式类**：以 `object` 为基类的类，**推荐使用**
+- **经典类**：不以 `object` 为基类的类，**不推荐使用**
+- 在 `Python 3.x` 中定义类时，如果没有指定父类，会 **默认使用** `object` 作为该类的 **基类** —— `Python 3.x` 中定义的类都是 **新式类**
+- 在 `Python 2.x` 中定义类时，如果没有指定父类，则不会以 `object` 作为 **基类**
+
+> **新式类** 和 **经典类** 在多继承时 —— **会影响到方法的搜索顺序**
+
+为了保证编写的代码能够同时在 `Python 2.x` 和 `Python 3.x` 运行！
+今后在定义类时，**如果没有父类，建议统一继承自 `object`**
+
+```python
+class 类名(object):
+    pass
+```
+
+
+
+#### python 多态
+
+**多态** 不同的 **子类对象** 调用相同的 **父类方法**，产生不同的执行结果
+
+1. - **多态** 可以 **增加代码的灵活度**
+   - 以 **继承** 和 **重写父类方法** 为前提
+   - 是调用方法的技巧，**不会影响到类的内部设计**
+
+```python
+class Dog(object):
+
+    def __init__(self, name):
+        self.name = name
+
+    def game(self):
+        print("%s 蹦蹦跳跳的玩耍..." % self.name)
+
+
+class XiaoTianDog(Dog):
+
+    def game(self):
+        print("%s 飞到天上去玩耍..." % self.name)
+
+
+class Person(object):
+
+    def __init__(self, name):
+        self.name = name
+
+    def game_with_dog(self, dog):
+
+        print("%s 和 %s 快乐的玩耍..." % (self.name, dog.name))
+
+        # 让狗玩耍
+        dog.game()
+
+
+# 1. 创建一个狗对象
+# wangcai = Dog("旺财")
+wangcai = XiaoTianDog("飞天旺财")
+
+# 2. 创建一个小明对象
+xiaoming = Person("小明")
+
+# 3. 让小明调用和狗玩的方法
+xiaoming.game_with_dog(wangcai)
+```
+
+
+
+#### python 类属性 和 类方法
+
+- **类属性** 就是给 **类对象** 中定义的 **属性**（类也是一个对象）
+- 通常用来记录 **与这个类相关** 的特征
+- **类属性** **不会用于**记录 **具体对象的特征**
+
+```python
+class Tool(object):
+
+    # 使用赋值语句，定义类属性，记录创建工具对象的总数
+    count = 0
+
+    def __init__(self, name):
+        self.name = name
+
+        # 针对类属性做一个计数+1
+        Tool.count += 1
+
+
+# 创建工具对象
+tool1 = Tool("斧头")
+tool2 = Tool("榔头")
+tool3 = Tool("铁锹")
+
+# 知道使用 Tool 类到底创建了多少个对象?
+print("现在创建了 {} 个工具".format(Tool.count))
+```
+
+
+
+```python
+# 定义类方法的语法
+@classmethod
+def 类方法名(cls):
+    pass
+```
+
+```python
+# 定义静态方法的语法
+@staticmethod
+def 静态方法名():
+    # 不访问实例属性和类属性 就定义一个静态方法
+    pass
+
+# 通过类名.调用静态方法 不需要创建对象
+```
+
+**小结：**
+
+1. **实例方法** - 方法内部需要访问实例属性，就可以定义实例方法
+2. **类方法** - 方法内部只需要访问类属性，就可以定义类方法
+3. **静态方法** - 方法内部，不需要访问实例属性和类属性，就可以定义静态方法
+
+
+
+
+
+
+
+
+
+
 
 
 
