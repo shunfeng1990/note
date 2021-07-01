@@ -1317,9 +1317,20 @@ class 类名(父类名):
 
 **也就是既要调用父类的方法，又要对该方法进行重写 则使用。**
 
- 
+ ```python
+ # 比如下面重写父类的 bark 方法
+ def bark(self):
+     # 针对子类需求重写父类的bark方法
+     print('重写父类的方法')
+     # 同时又想保留父类的方法 就要使用super()
+     super().bark()
+     # 下面还可以编写其他的代码
+     print('其他的代码')
+ ```
 
-**在 `Python 2.x` 时，如果需要调用父类的方法，还可以使用以下方式：**
+
+
+**在 `Python 2.x` 时，如果需要调用父类的方法，可以使用以下方式：**(Python3中 不推荐)
 
 ```python
 父类名.方法(self)
@@ -1374,6 +1385,10 @@ print(C.__mro__)
 class 类名(object):
     pass
 ```
+
+
+
+> 方法重写就是派生类创建了一个和基类（父类）同名的方法，重新编写了父类方法 就是方法重写。
 
 
 
@@ -1481,6 +1496,53 @@ def 静态方法名():
 3. **静态方法** - 方法内部，不需要访问实例属性和类属性，就可以定义静态方法
 
 
+
+#### python 单例模式
+
+- 单例设计模式
+
+- - **目的** —— 让 **类** 创建的对象，在系统中 **只有** **唯一的一个实例**
+  - 每一次执行 `类名()` 返回的对象，**内存地址是相同的**
+
+- ```python
+  class MusicPlayer(object):
+  
+      # 记录第一个被创建对象的引用
+      instance = None
+      # 记录是否执行过初始化动作
+      init_flag = False
+  
+      def __new__(cls, *args, **kwargs):
+  
+          # 1. 判断类属性是否是空对象
+          if cls.instance is None:
+              # 2. 调用父类的方法，为第一个对象分配空间
+              cls.instance = super().__new__(cls)
+  
+          # 3. 返回类属性保存的对象引用
+          return cls.instance
+  
+      def __init__(self):
+  
+          if not MusicPlayer.init_flag:
+              print("初始化音乐播放器")
+  
+              MusicPlayer.init_flag = True
+  
+  
+  # 创建多个对象
+  player1 = MusicPlayer()
+  print(player1)
+  
+  player2 = MusicPlayer()
+  print(player2)
+  ```
+
+- > python天生就是单例模式  把功能写到一个py文件，import 导入该模块 其实就是单例模式
+
+
+
+### python 模块
 
 
 
