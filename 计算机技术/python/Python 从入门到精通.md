@@ -265,6 +265,12 @@ for i in range(101):
 print(result)    
 ```
 
+用sum函数计算1加到100的总和
+
+```python
+sum(range(101))
+```
+
 用for循环输出九九乘法表
 
 ```python
@@ -1544,9 +1550,376 @@ def 静态方法名():
 
 ### python 模块
 
+> **模块是 Python 程序架构的一个核心概念**
+
+- 每一个以扩展名 `py` 结尾的 `Python` 源代码文件都是一个 **模块**
+- **模块名** 同样也是一个 **标识符**，需要符合标识符的命名规则
+- 在模块中定义的 **全局变量** 、**函数**、**类** 都是提供给外界直接使用的 **工具**
+- **模块** 就好比是 **工具包**，要想使用这个工具包中的工具，就需要先 **导入** 这个模块
+
+```python
+# 一次性导入俩模块
+import 模块名1, 模块名2
+
+# 分别导入 推荐这种
+import 模块1
+import 模块2
+```
+
+```python
+import random
+
+# 使用模块里面的工具生成一个0~10的数字
+rand = random.randint(0, 10)
+print(rand)
+```
+
+```python
+# 给模块指定别名
+import random as suiji
+print(suiji.randint(0,3))
+```
+
+#### from...import 导入
+
+- 如果希望 **从某一个模块** 中，导入 **部分** 工具，就可以使用 `from ... import` 的方式
+- `import 模块名` 是 **一次性** 把模块中 **所有工具全部导入**，并且通过 **模块名/别名** 访问
+
+```python
+# 只导入模块的某一个工具
+from random import randint
+
+# 只导入某一个工具的话 可以直接使用
+print(randint(1, 5))
+```
+
+```python
+# 从 模块 导入 所有工具 使用起来也可以直接使用
+# 这种方式不推荐使用，因为函数重名并没有任何的提示，出现问题不好排查
+from 模块名1 import *
+```
+
+#### 模块的搜索顺序[扩展]
+
+`Python` 的解释器在 **导入模块** 时，会：
+
+1. 搜索 **当前目录** 指定模块名的文件，**如果有就直接导入**
+2. 如果没有，再搜索 **系统目录**
+
+> 在开发时，给文件起名，不要和 **系统的模块文件** **重名**
+
+`Python` 中每一个模块都有一个内置属性 `__file__` 可以 **查看模块** 的 **完整路径**
+
+```python
+import random
+
+# __file__ 可以查看模块的文件路径
+print(random.__file__)
+```
+
+#### `__name__` 属性
+
+> - `__name__` 属性可以做到，测试模块的代码 **只在测试情况下被运行**，而在 **被导入时不会被执行**！
+
+- `__name__` 是 `Python` 的一个内置属性，记录着一个 **字符串**
+- 如果 **是被其他文件导入的**，`__name__` 就是 **模块名**
+- 如果 **是当前执行的程序** `__name__` 是 **`__main__`**
+
+```python
+# 主要用于写好的模块，在当前文件下调试使用
+
+# 根据 __name__ 判断是否执行下方代码
+if __name__ == "__main__":
+    main()
+```
 
 
 
+### python 包
+
+- **包** 是一个 **包含多个模块** 的 **特殊目录**
+- 目录下有一个 **特殊的文件** `__init__.py`
+- 包名的 **命名方式** 和变量名一致，**小写字母** + `_`
+
+**好处**
+
+- 使用 `import 包名` 可以一次性导入 **包** 中 **所有的模块**
+
+### `__init__.py`
+
+- 要在外界使用 **包** 中的模块，需要在 `__init__.py` 中指定 **对外界提供的模块列表**
+
+方法1：
+
+```python
+# 从 当前目录 导入 模块列表 (以下是__init__.py 内容)
+from . import send_message
+from . import receive_message
+```
+
+```python
+import message  # 引入包
+
+# 使用message包里面的send_message模块里的send方法
+message.send_message.send()
+```
+
+方法2：
+
+```python
+# 使用 __all__ 列出需要导入的模块 （以下是 __init__.py 内容）
+__all__ = ['receive_message', 'send_message']
+```
+
+```python
+# 当 __init__.py 中定义了 __all__ 变量时，import * 只会导入 __all__中列出的模块
+
+# 导入message包中的全部模块
+from message import *
+
+# 使用模块下的send方法
+send_message.send()
+```
+
+```python
+# 生成随机字母 验证码案例
+import random
+
+b = ""
+for i in range(4):
+    if random.randrange(0, 4) == 0:
+        b += chr(random.randint(97, 122))
+    elif random.randrange(0, 4) == 1:
+        b += chr(random.randint(65, 90))
+    else:
+        b += str(random.randint(1, 9))
+print(b)
+```
+
+#### 发布模块
+
+- 如果希望自己开发的模块，**分享** 给其他人，可以按照以下步骤操作
+
+步骤：新建个文件夹 - 把上面的包复制进来 - 创建setup.py文件 - 构建模块 - 生成发布压缩包 
+
+#### 1) 创建 setup.py
+
+- `setup.py` 的文件
+
+```python
+from distutils.core import setup
+
+setup(name="hm_message",  # 包名
+      version="1.0",  # 版本
+      description="itheima's 发送和接收消息模块",  # 描述信息
+      long_description="完整的发送和接收消息模块",  # 完整描述信息
+      author="itheima",  # 作者
+      author_email="itheima@itheima.com",  # 作者邮箱
+      url="www.itheima.com",  # 主页
+      py_modules=["hm_message.send_message",
+                  "hm_message.receive_message"])
+```
+
+有关字典参数的详细信息，可以参阅官方网站：
+
+https://docs.python.org/2/distutils/apiref.html
+
+#### 2) 构建模块
+
+```python
+$ python3 setup.py build
+```
+
+#### 3) 生成发布压缩包( dist文件夹下的压缩包就是压缩后的模块)
+
+```python
+$ python3 setup.py sdist
+```
+
+> 注意：要制作哪个版本的模块，就使用哪个版本的解释器执行！
+
+### 安装模块
+
+```
+$ tar -zxvf hm_message-1.0.tar.gz 
+
+$ sudo python3 setup.py install
+```
+
+**卸载模块**
+
+直接从安装目录下，把安装模块的 **目录** 删除就可以
+
+```
+$ cd /usr/local/lib/python3.5/dist-packages/
+$ sudo rm -r hm_message*
+```
+
+### `pip` 安装第三方模块
+
+- **第三方模块** 通常是指由 **知名的第三方团队** **开发的** 并且被 **程序员广泛使用** 的 `Python` 包或模块
+
+- 例如 `pygame` 就是一套非常成熟的 **游戏开发模块**
+- `pip` 是一个现代的，通用的 `Python` 包管理工具
+- 提供了对 `Python` 包的查找、下载、安装、卸载等功能
+
+安装和卸载命令如下：
+
+```
+# 将模块安装到 Python 2.x 环境
+$ sudo pip install pygame
+$ sudo pip uninstall pygame
+
+# 将模块安装到 Python 3.x 环境
+$ sudo pip3 install pygame
+$ sudo pip3 uninstall pygame
+```
+
+#### 在 `Mac` 下安装 `iPython`
+
+```
+$ sudo pip install ipython
+```
+
+#### 在 `Linux` 下安装 `iPython`
+
+```
+$ sudo apt install ipython
+$ sudo apt install ipython3
+```
+
+
+
+### 异常处理及程序调试
+
+- 程序在运行时，如果 `Python 解释器` **遇到** 到一个错误，**会停止程序的执行，并且提示一些错误信息**，这就是 **异常**
+- **程序停止执行并且提示错误信息** 这个动作，我们通常称之为：**抛出(raise)异常**
+
+```python
+# 简单语法
+
+try:
+    尝试执行的代码
+except:
+    出现错误的处理
+```
+
+- `try` **尝试**，下方编写要尝试代码，不确定是否能够正常执行的代码
+- `except` **如果不是**，下方编写尝试失败的代码
+
+```python
+try:
+    a = 10/0
+    print(a)
+except:
+    print('0不能当除数')
+```
+
+
+
+```python
+# 错误类型捕获
+
+try:
+    # 尝试执行的代码
+    pass
+except 错误类型1:
+    # 针对错误类型1，对应的代码处理
+    pass
+except (错误类型2, 错误类型3):
+    # 针对错误类型2 和 3，对应的代码处理
+    pass
+except Exception as result:
+    print("未知错误 %s" % result)
+```
+
+> - 当 `Python` 解释器 **抛出异常** 时，**最后一行错误信息的第一个单词，就是错误类型**
+
+```python
+try:
+    num = int(input("请输入整数："))
+    result = 8 / num
+    print(result)
+except ValueError:
+    print("请输入正确的整数")
+except ZeroDivisionError:
+    print("除 0 错误")
+```
+
+```python
+# 捕获未知的错误
+
+except Exception as result:  # result 接收错误的内容
+    print("未知错误 %s" % result)
+```
+
+
+
+```python
+# 异常错误完整语法
+
+try:
+    # 尝试执行的代码
+    pass
+except 错误类型1:
+    # 针对错误类型1，对应的代码处理
+    pass
+except 错误类型2:
+    # 针对错误类型2，对应的代码处理
+    pass
+except (错误类型3, 错误类型4):
+    # 针对错误类型3 和 4，对应的代码处理
+    pass
+except Exception as result:
+    # 打印错误信息
+    print(result)
+else:
+    # 没有异常才会执行的代码
+    pass
+finally:
+    # 无论是否有异常，都会执行的代码
+    print("无论是否有异常，都会执行的代码")
+```
+
+
+
+### 抛出异常
+
+- `Python` 中提供了一个 `Exception` **异常类**
+
+- 在开发时，如果满足 **特定业务需求时**，希望 **抛出异常**，可以：
+
+- 1. **创建** 一个 `Exception` 的 **对象**
+  2. 使用 `raise` **关键字** 抛出 **异常对象**
+
+```python
+def input_password():
+
+    # 1. 提示用户输入密码
+    pwd = input("请输入密码：")
+
+    # 2. 判断密码长度，如果长度 >= 8，返回用户输入的密码
+    if len(pwd) >= 8:
+        return pwd
+
+    # 3. 密码长度不够，需要抛出异常
+    # 1> 创建异常对象 - 使用异常的错误信息字符串作为参数
+    ex = Exception("密码长度不够")
+
+    # 2> 抛出异常对象
+    raise ex
+
+
+try:
+    user_pwd = input_password()
+    print(user_pwd)
+except Exception as result:
+    print("发现错误：%s" % result)
+```
+
+
+
+### 文件及目录操作
 
 
 
