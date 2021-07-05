@@ -1921,6 +1921,706 @@ except Exception as result:
 
 ### 文件及目录操作
 
+在 **计算机** 中要操作文件的套路非常固定，一共包含**三个步骤**：
+
+1. 打开文件
+2. 读、写文件
+   - **读** 将文件内容读入内存
+   - **写** 将内存内容写入文件
+3. 关闭文件
+
+### 2.2 操作文件的函数/方法
+
+- 在 `Python` 中要操作文件需要记住 1 个函数和 3 个方法
+
+| 序号 | 函数/方法 | 说明                           |
+| ---- | --------- | ------------------------------ |
+| 01   | open      | 打开文件，并且返回文件操作对象 |
+| 02   | read      | 将文件内容读取到内存           |
+| 03   | write     | 将指定内容写入文件             |
+| 04   | close     | 关闭文件                       |
+
+- `open` 函数负责打开文件，并且返回文件对象
+- `read`/`write`/`close` 三个方法都需要通过 **文件对象** 来调用
+
+### 2.3 read 方法 —— 读取文件
+
+- ```
+  open
+  ```
+
+   函数的第一个参数是要打开的文件名（文件名区分大小写）
+
+  - 如果文件 **存在**，返回 **文件操作对象**
+  - 如果文件 **不存在**，会 **抛出异常**
+
+- `read` 方法可以一次性 **读入** 并 **返回** 文件的 **所有内容**
+
+- ```
+  close
+  ```
+
+   方法负责 
+
+  关闭文件
+
+  - 如果 **忘记关闭文件**，**会造成系统资源消耗，而且会影响到后续对文件的访问**
+
+- **注意**：`read` 方法执行后，会把 **文件指针** 移动到 **文件的末尾**
+
+```python
+# 1. 打开 - 文件名需要注意大小写
+file = open("README")
+
+# 2. 读取
+text = file.read()
+print(text)
+
+# 3. 关闭
+file.close()
+```
+
+**提示**
+
+- 在开发中，通常会先编写 **打开** 和 **关闭** 的代码，再编写中间针对文件的 **读/写** 操作！
+
+#### 文件指针（知道）
+
+- **文件指针** 标记 **从哪个位置开始读取数据**
+- **第一次打开** 文件时，通常 **文件指针会指向文件的开始位置**
+- 当执行了 read 方法后，文件指针会移动到 读取内容的末尾
+  - 默认情况下会移动到 **文件末尾**
+
+**思考**
+
+- 如果执行了一次 `read` 方法，读取了所有内容，那么再次调用 `read` 方法，还能够获得到内容吗？
+
+**答案**
+
+- 不能
+- 第一次读取之后，文件指针移动到了文件末尾，再次调用不会读取到任何的内容
+
+### 2.4 打开文件的方式
+
+- `open` 函数默认以 **只读方式** 打开文件，并且返回文件对象
+
+语法如下：
+
+```python
+f = open("文件名", "访问方式")
+```
+
+| 访问方式 | 说明                                                         |
+| -------- | ------------------------------------------------------------ |
+| r        | 以**只读**方式打开文件。文件的指针将会放在文件的开头，这是**默认模式**。如果文件不存在，抛出异常 |
+| w        | 以**只写**方式打开文件。如果文件存在会被覆盖。如果文件不存在，创建新文件 |
+| a        | 以**追加**方式打开文件。如果该文件已存在，文件指针将会放在文件的结尾。如果文件不存在，创建新文件进行写入 |
+| r+       | 以**读写**方式打开文件。文件的指针将会放在文件的开头。如果文件不存在，抛出异常 |
+| w+       | 以**读写**方式打开文件。如果文件存在会被覆盖。如果文件不存在，创建新文件 |
+| a+       | 以**读写**方式打开文件。如果该文件已存在，文件指针将会放在文件的结尾。如果文件不存在，创建新文件进行写入 |
+
+**提示**
+
+- 频繁的移动文件指针，**会影响文件的读写效率**，开发中更多的时候会以 **只读**、**只写** 的方式来操作文件
+
+**写入文件示例**
+
+```python
+# 打开文件
+f = open("README", "w")
+
+f.write("hello python！\n")
+f.write("今天天气真好")
+
+# 关闭文件
+f.close()
+```
+
+### 按行读取文件内容
+
+- `read` 方法默认会把文件的 **所有内容** **一次性读取到内存**
+- 如果文件太大，对内存的占用会非常严重
+
+#### `readline` 方法
+
+- `readline` 方法可以一次读取一行内容
+- 方法执行后，会把 **文件指针** 移动到下一行，准备再次读取
+
+**读取大文件的正确姿势** （逐行读取全部内容）
+
+```python
+# 打开文件
+file = open("README")
+
+while True:
+    # 读取一行内容
+    text = file.readline()
+
+    # 判断是否读到内容
+    if not text:
+        break
+
+    # 每读取一行的末尾已经有了一个 `\n`
+    print(text, end="")
+
+# 关闭文件
+file.close()
+```
+
+### 文件读写案例 —— 复制文件
+
+**目标**
+
+用代码的方式，来实现文件复制过程
+
+#### 小文件复制
+
+- 打开一个已有文件，读取完整内容，并写入到另外一个文件
+
+```python
+# 1. 打开文件
+file_read = open("README")
+file_write = open("README[复件]", "w")
+
+# 2. 读取并写入文件
+text = file_read.read()
+file_write.write(text)
+
+# 3. 关闭文件
+file_read.close()
+file_write.close()
+```
+
+#### 大文件复制
+
+- 打开一个已有文件，逐行读取内容，并顺序写入到另外一个文件
+
+```python
+# 1. 打开文件
+file_read = open("README")
+file_write = open("README[复件]", "w")
+
+# 2. 读取并写入文件
+while True:
+    # 每次读取一行
+    text = file_read.readline()
+
+    # 判断是否读取到内容
+    if not text:
+        break
+
+    file_write.write(text)
+
+# 3. 关闭文件
+file_read.close()
+file_write.close()
+```
+
+## 文件/目录的常用管理操作
+
+- 创建、重命名、删除、改变路径、查看目录内容、……
+
+- 在 `Python` 中，如果希望通过程序实现上述功能，需要导入 `os` 模块
+
+### 文件操作
+
+| 序号 | 方法名 | 说明       | 示例                              |
+| ---- | ------ | ---------- | --------------------------------- |
+| 01   | rename | 重命名文件 | `os.rename(源文件名, 目标文件名)` |
+| 02   | remove | 删除文件   | `os.remove(文件名)`               |
+
+### 目录操作
+
+| 序号 | 方法名     | 说明           | 示例                      |
+| ---- | ---------- | -------------- | ------------------------- |
+| 01   | listdir    | 目录列表       | `os.listdir(目录名)`      |
+| 02   | mkdir      | 创建目录       | `os.mkdir(目录名)`        |
+| 03   | rmdir      | 删除目录       | `os.rmdir(目录名)`        |
+| 04   | getcwd     | 获取当前目录   | `os.getcwd()`             |
+| 05   | chdir      | 修改工作目录   | `os.chdir(目标目录)`      |
+| 06   | path.isdir | 判断是否是文件 | `os.path.isdir(文件路径)` |
+
+> 提示：文件或者目录操作都支持 **相对路径** 和 **绝对路径**
+
+## 04. 文本文件的编码格式（科普）
+
+- 文本文件存储的内容是基于 **字符编码** 的文件，常见的编码有 `ASCII` 编码，`UNICODE` 编码等
+
+> Python 2.x 默认使用 `ASCII` 编码格式
+> Python 3.x 默认使用 `UTF-8` 编码格式
+
+### 4.1 ASCII 编码和 UNICODE 编码
+
+#### `ASCII` 编码
+
+- 计算机中只有 `256` 个 `ASCII` 字符
+
+- 一个 
+
+  ```
+  ASCII
+  ```
+
+   在内存中占用 
+
+  1 个字节
+
+   的空间
+
+  - `8` 个 `0/1` 的排列组合方式一共有 `256` 种，也就是 `2 ** 8`
+
+ 
+
+#### `UTF-8` 编码格式
+
+- 计算机中使用 **1~6 个字节** 来表示一个 `UTF-8` 字符，涵盖了 **地球上几乎所有地区的文字**
+- 大多数汉字会使用 **3 个字节** 表示
+- `UTF-8` 是 `UNICODE` 编码的一种编码格式
+
+### 4.2 Ptyhon 2.x 中如何使用中文
+
+> Python 2.x 默认使用 `ASCII` 编码格式
+> Python 3.x 默认使用 `UTF-8` 编码格式
+
+- 在 Python 2.x 文件的 **第一行** 增加以下代码，解释器会以 `utf-8` 编码来处理 python 文件
+
+```python
+# *-* coding:utf8 *-*
+```
+
+> 这方式是官方推荐使用的！
+
+- 也可以使用
+
+```python
+# coding=utf8
+```
+
+#### unicode 字符串
+
+- 在 `Python 2.x` 中，即使指定了文件使用 `UTF-8` 的编码格式，但是在遍历字符串时，仍然会 **以字节为单位遍历** 字符串
+- 要能够 **正确的遍历字符串**，在定义字符串时，需要 **在字符串的引号前**，增加一个小写字母 `u`，告诉解释器这是一个 `unicode` 字符串（使用 `UTF-8` 编码格式的字符串）
+
+```python
+# *-* coding:utf8 *-*
+# 在字符串前，增加一个 `u` 表示这个字符串是一个 utf8 字符串
+hello_str = u"你好世界"
+
+print(hello_str)
+
+for c in hello_str:
+    print(c)
+```
+
+
+
+#### 打开文件时使用with语句 (推荐)
+
+```python
+# 读取文件全部内容
+with open(r'1.txt', 'r') as file:
+    data = file.read()
+
+print(data)
+
+# ---------------------
+
+with open(r'1.txt', 'r') as file:
+    data = file.read(5)  # 读取前5个字符
+    
+print(data)
+
+# --------------------
+
+with open(r'1.txt', 'r') as file:
+    file.seek(2)  # 移动文件指针到指定的位置
+    data = file.read(3)  # 往后读取3个字符
+print(data)
+
+# -------------------
+
+with open(r'1.txt', 'r') as file:  # 读取中文的内容
+    data = file.read()
+print(data[2:5])  # 中文报错 就取出来截取下算了
+
+# 逐行读取全部内容 readline()
+with open(r'1.txt', 'r') as file:
+    while True:
+        data = file.readline()
+        if not data:
+            break
+        print(data, end='')
+
+```
+
+```python
+# 写入内容 追加的方式
+with open(r'1.txt', 'a') as file:  # a 是追加内容
+    res = file.write('追加一条内容 \n')
+
+if not res:
+    print('写入失败')
+else:
+    print('写入成功')
+```
+
+```python
+# 写入内容 覆盖的方式
+with open(r'1.txt', 'w') as file:  # w 是覆盖原内容
+    res = file.write('覆盖了原来的内容的 \n')
+
+if not res:
+    print('写入失败')
+else:
+    print('写入成功')
+```
+
+
+
+```python
+# 判断当前操作系统
+import os
+if os.name == 'posix':
+    print('Linux')
+elif os.name == 'nt':
+    print('Windows')
+
+```
+
+```python
+import os
+# 创建目录 先判断是否存在，不存在则创建
+if not os.path.exists('demo'):
+    os.mkdir('demo')
+    print('目录创建成功')
+else:
+    print('目录已存在')
+```
+
+```python
+import os
+# 创建多级目录
+if not os.path.exists(r'a/b/c'):
+    os.makedirs(r'a/b/c')
+else:
+    print('多级目录已存在')
+```
+
+```python
+import os
+# 删除目录 只能删除空目录
+path = 'aa'
+if os.path.exists(path):
+    os.rmdir(path)
+else:
+    print('要删除的目录不存在')
+```
+
+```python
+import os
+import shutil
+# 删除目录全部内容
+path = 'aa'
+if os.path.exists(path):
+    shutil.rmtree(path)
+    print('目录已清空')
+else:
+    print('要删除的目录不存在')
+```
+
+```python
+import os
+# 遍历目录
+tuples = os.walk('demo')
+for root, dirs, files in tuples:
+    # print(root, dirs, files)
+    for name in dirs:
+        print(os.path.join(root, name))  # 将目录与目录或文件名拼接起来
+    for name in files:
+        print(os.path.join(root, name))
+```
+
+```python
+import os
+# 删除文件
+if os.path.exists('1.txt'):
+    os.remove('1.txt')
+    print('文件已删除')
+else:
+    print('文件不存在')
+```
+
+```python
+import os
+# 重命名目录或文件
+if os.path.exists('1.txt'):
+    os.rename('1.txt', '2.txt')
+    print('重命名完毕')
+else:
+    print('文件不存在')
+```
+
+```python
+import os
+
+
+def format_time(longtime):
+    """
+    格式化日期时间函数
+    :longtime: 要格式化的时间
+    """
+    import time
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(longtime))
+
+
+# 获取文件基本信息
+file_info = os.stat('2.txt')
+print('文件大小：{} Byte'.format(file_info.st_size))
+print('最后修改时间：{}'.format(format_time(file_info.st_mtime)))
+print('最后访问时间：{}'.format(format_time(file_info.st_atime)))
+print('文件创建时间：{}'.format(format_time(file_info.st_ctime)))  # windows返回的是创建时间 linux返回最后修改时间
+
+```
+
+
+
+### 操作数据库
+
+#### SQLite
+
+```python
+# 创建一个数据库 并创建一个表
+import sqlite3
+
+# 连接SQLite数据库，文件不存在则创建
+conn = sqlite3.connect('test.db')
+
+# 创建一个 cursor
+cursor = conn.cursor()
+
+# 执行一条sql语句，创建suer表
+cursor.execute('create table user(id int(10) primary key, name varchar(20))')
+
+# 关闭游标
+cursor.close()
+
+# 关闭 connection
+conn.close()
+```
+
+```python
+# 表中插入数据
+import sqlite3
+
+conn = sqlite3.connect('test.db')  # 连接SQLite数据库
+cursor = conn.cursor()  # 创建一个 cursor
+
+# 执行sql语句
+cursor.execute('insert into user (id, name) values ("1", "admin")')
+cursor.execute('insert into user (id, name) values ("2", "Andy")')
+cursor.execute('insert into user (id, name) values ("3", "明日科技")')
+
+cursor.close()  # 关闭游标
+conn.commit()  # 提交事物
+conn.close()  # 关闭 connection
+```
+
+```python
+# 查询数据
+import sqlite3
+
+conn = sqlite3.connect('test.db')  # 连接SQLite数据库
+cursor = conn.cursor()  # 创建一个 cursor
+
+# 执行sql语句
+cursor.execute('select * from user')
+
+# 获取查询结果
+# result1 = cursor.fetchone()
+# print(result1)  # 获取一条记录
+
+# result2 = cursor.fetchmany(2)
+# print(result2)  # 指定获取几条记录
+
+result3 = cursor.fetchall()
+print(result3)  # 获取全部记录
+
+cursor.close()  # 关闭游标
+conn.commit()  # 提交事务
+conn.close()  # 关闭 connection
+```
+
+```python
+# 按条件查询
+import sqlite3
+
+conn = sqlite3.connect('test.db')  # 连接数据库
+cursor = conn.cursor()  # 创建一个 cursor
+
+# 执行sql语句
+cursor.execute('select * from user where id > ?', (1,))  # 使用?占位符 可以避免sql注入 推荐使用
+
+result3 = cursor.fetchall()
+print(result3)  # 获取条件 id 大于 1的数据
+
+cursor.close()  # 关闭游标
+conn.close()  # 关闭 connection
+```
+
+```python
+# 修改数据
+import sqlite3
+
+conn = sqlite3.connect('test.db')  # 连接数据库
+cursor = conn.cursor()  # 创建一个 cursor
+
+# 执行sql语句
+cursor.execute('update user set name = ? where id = ?', ('admin888', '1'))
+cursor.execute('select * from user')
+result3 = cursor.fetchall()
+print(result3)
+
+cursor.close()  # 关闭游标
+conn.commit()  # 提交事物
+conn.close()  # 关闭 connection
+```
+
+```python
+# 删除数据
+import sqlite3
+
+conn = sqlite3.connect('test.db')  # 连接数据库
+cursor = conn.cursor()  # 创建一个 cursor
+
+# 执行sql语句
+cursor.execute('delete from user where id = ?', ('1',))  # 删除id是1的数据
+cursor.execute('select * from user')
+result3 = cursor.fetchall()
+print(result3)
+
+cursor.close()  # 关闭游标
+conn.commit()  # 提交事物
+conn.close()  # 关闭 connection
+```
+
+#### Mysql (使用前先安装pymysql)
+
+> python原先的老版本使用的是 mysqldb 后续都使用的 pymysql
+
+```sh
+pip install PyMySQL
+```
+
+```python
+# 创建suer表
+import pymysql
+conn = pymysql.connect(host="localhost", user="root", password="123456", database="stu", charset="utf8")  # 连接数据库
+c = conn.cursor()  # 创建游标对象
+c.execute('create table user(id int(10) primary key, name varchar(20))')  # 执行sql语句
+conn.close()  # 关闭数据库连接
+```
+
+```python
+# 插入数据
+import pymysql
+conn = pymysql.connect(host="localhost", user="root", password="123456", database="stu", charset="utf8")
+c = conn.cursor()  # 创建游标对象
+try:
+    c.execute('insert into user(id, name) values (1, "admin")')  # 执行sql语句
+    conn.commit()  # 提交数据
+except:
+    conn.rollback()  # 发生错误回滚
+conn.close()  # 关闭数据库连接
+```
+
+> 操作与SQLite 类似
+
+
+
+## 高级应用
+
+### GUI界面编程
+
+常用的GUI框架
+
+| 工具包   | 描述                                                         |
+| :------- | :----------------------------------------------------------- |
+| wxPython | wxPython 是Python语言的一套优秀的GUI图形库,允许Python很方便的创建完整的、功能健全的GUI用户界面 |
+| Kivy     | Kivy 是一个开源工具包，能够让使用相同源代码创建的程序跨平台运行。它主要关注创新型用户界面开发，如多点触摸应用程序。 |
+| Flexx    | Flexx 是一个纯Python工具包，用来创建图形化界面应用程序。它使用Web技术进行界面的渲染 |
+| PyQt5    | PyQt 是Qt库的Python版本，支持跨平台                          |
+| Tkinter  | Tkinter(也叫TK接口) 是Tk图形用户界面工具包标准的Python接口。Tk是一个轻量级的跨平台图形用户界面开发工具 |
+| Pywin32  | Windows Pywin32允许用户像 VC 一样的形式来使用Python开发win32应用 |
+| PyGTK    | PyGTK 让用户用python轻松创建具有图形用户界面的程序           |
+| pyui4win | pyui4win 是一个开源的采用自绘技术的界面库                    |
+
+#### 安装PyQt5
+
+1. 安装命令
+
+```sh
+pip3 install PyQt5
+sudo apt-get install qttools5-dev-tools
+sudo apt-get install qt5-default
+sudo apt install pyqt5-dev-tools
+```
+
+2. 配置Pycharm
+
+#### 文件 - 设置 - 工具 - 外部工具 - 点击 + 号 - 开始编辑工具
+
+#### 工具1. 配置QtDesigner - 用于Pycharm可以直接启动QtDesigner：
+
+名称：QtDesigner  	组：Qt5
+
+描述：Qt Designer
+
+程序：/usr/bin/designer
+
+参数：$FileName$
+
+工作目录：$ProjectFileDir$
+
+#### 工具2. 用于将ui文件转换成py文件
+
+名称：PyUIC  	组：Qt5
+
+描述：Py UI to pyfile
+
+程序：/usr/bin/python3
+
+参数：-m PyQt5.uic.pyuic  $FileName$ -o $FileNameWithoutExtension$.py
+
+工作目录：$FileDir$
+
+> 然后点击菜单上面的工具就发现会有Qt5了 里面就有对应的工具了
+
+
+
+选择 QtDesigner 设计窗口，保存到项目目录后，点击右键 选择 Qt5里面的 PyUIC 转换成 py文件
+
+添加入口代码，方可执行py文件 打开窗口
+
+```python
+import sys
+# 程序入口,程序从此处启动 PyQt 设计的窗口
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()  # 创建窗口
+    ui = Ui_MainWindow()  # 创建PyQt 设计的窗口
+    ui.setupUi(MainWindow)  # 初始化设置
+    MainWindow.show()  # 显示窗口
+    sys.exit(app.exec_())  # 程序关闭时退出进程
+```
+
+> py文件打包成exe文件 需要安装 pyinstaller
+
+#### 如提示“PyInstaller：未找到命令” 则执行如下命令：
+
+```sh
+sudo cp /home/andy/.local/bin/pyinstaller /usr/bin/pyinstaller  # andy为用户名
+```
+
 
 
 
