@@ -30,3 +30,5 @@
 29. [Typora](https://typora.io/#download) - 一款可视化的Markdown编辑器
 30. [Pigcha加速器](http://www.pigcha.com/) - 支持windows linux ios android
 31. [SEX.ORG](https://ch.hdsex.org/) - 成人
+32. [超级鹰](https://www.chaojiying.com/) - 验证码识别平台
+
