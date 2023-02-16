@@ -37,4 +37,5 @@
 36. [VPN社区](https://vpnse.org/) - VPN社区
 37. [v2raySE](https://v2rayse.com/) - V2raySE
 38. [长风分享](https://www.cfmem.com/) - 长风分享
+39. [短信接码](https://sms-activate.org/) - 国外手机验证码接收
 
